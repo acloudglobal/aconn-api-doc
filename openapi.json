@@ -1,0 +1,2832 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "ACONN API 接口文档",
+    "description" : "Aconn API 是一套基于 HTTP 协议的 `RESTful` 风格 API。\n具有资源可预测性。使用 HTTP 状态码来表明错误。\nHTTP Request 和 Response 的 body 都使用 `JSON` 格式。\n您可以使用最喜欢的 HTTP/REST 库(比如 `Apache Http Client` )来访问 ACONN 的 API，或者使用 HTTP/REST 客户端(比如 `Postman` )来访问 ACONN 的 API。\n\n## 错误信息\nAPI 使用标准的 HTTP 状态码来表示调用的成功或者失败。 Response 的 body 会使用以下的 JSON 格式:\n\n```\n{\n  \"error\": {\n    \"status\": 400,\n    \"error\": \"EMAIL_EXIST_ERROR\",\n    \"description\": \" email already exists \"\n  }\n}\n```\n\n## 认证\nACONN API 提供以下的认证方式: `API TOKEN`方式。\n* `API TOKEN方式`: 使用生成API TOKEN进行认证。\n\n**请务必保证认证信息的安全，不要分享给别人**\n\n### API TOKEN方式 \nAconn API 支持 API TOKEN 方式进行认证。\n\nHTTP 客户端需要在 `HTTP Header` 中带上认证信息，格式如下：\n\n字段名称 | 类型 \n-----|:------:\nAuth | String \n\n\n* `API TOKEN` 可以在 `Aconn平台` 的 `用户管理` 下获取。\n",
+    "license" : {
+      "name" : "爱云信息技术（上海）有限公司",
+      "url" : "https://www.acloudglobal.com/app/acloud/#/home"
+    },
+    "version" : "1.0.0",
+    "x-logo" : {
+      "url" : "./aconn.png",
+      "backgroundColor" : "#FFFFFF",
+      "altText" : "aconn logo"
+    }
+  },
+  "servers" : [ {
+    "url" : "Http://localhost:8090",
+    "description" : "Aconn API Auto Mocking"
+  } ],
+  "tags" : [ {
+    "name" : "资产管理(asset)",
+    "description" : "资产查询"
+  }, {
+    "name" : "关联管理(assignment)",
+    "description" : "资产和终端关联关系创建/释放操作"
+  }, {
+    "name" : "指令管理(command)",
+    "description" : "指令是服务端与终端通信交互的载体，服务器可以向终端发送指令，终端执行命令完成相应的操作"
+  }, {
+    "name" : "终端组管理(endpointGroup)",
+    "description" : "终端组查询/添加操作"
+  }, {
+    "name" : "终端管理(endpoint)",
+    "description" : "终端创建/更新/查询操作"
+  }, {
+    "name" : "事件管理(event)",
+    "description" : "事件查询操作"
+  }, {
+    "name" : "项目管理(project)",
+    "description" : "项目创建/查询操作"
+  }, {
+    "name" : "规格管理(specification)",
+    "description" : "规格查询操作"
+  } ],
+  "paths" : {
+    "/api/v1/assets" : {
+      "get" : {
+        "tags" : [ "资产管理(asset)" ],
+        "summary" : "资产查询",
+        "operationId" : "listAsset",
+        "parameters" : [ {
+          "name" : "tenantId",
+          "in" : "query",
+          "description" : "租户id",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "type",
+          "in" : "query",
+          "description" : "资产类型",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "id",
+          "in" : "query",
+          "description" : "资产id",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "name",
+          "in" : "query",
+          "description" : "资产名称",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "分页当前页数(默认0)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "description" : "每页条数(默认20,最大100)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "排序方式(格式:field,desc)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/AssetDto"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        },
+        "security" : [ {
+          "apiToken" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/assignments/batches" : {
+      "post" : {
+        "tags" : [ "关联管理(assignment)" ],
+        "summary" : "批量创建终端与资产的关联(单批次操作限制100条)",
+        "operationId" : "createBatchEndpointAssignment",
+        "requestBody" : {
+          "description" : "请求参数体",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AssignmentCreateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          },
+          "201" : {
+            "description" : "Created"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        },
+        "security" : [ {
+          "apiToken" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/assignments/{assignmentToken}/releases" : {
+      "put" : {
+        "tags" : [ "关联管理(assignment)" ],
+        "summary" : "释放关联终端",
+        "operationId" : "endEndpointAssignment",
+        "parameters" : [ {
+          "name" : "assignmentToken",
+          "in" : "path",
+          "description" : "关联token",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "释放关联终端",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AssignmentUpdateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AssignmentDto"
+                }
+              }
+            }
+          },
+          "201" : {
+            "description" : "Created"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        },
+        "security" : [ {
+          "apiToken" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/commands/invocations" : {
+      "post" : {
+        "tags" : [ "指令管理(command)" ],
+        "summary" : "终端命令调用",
+        "operationId" : "createCommandInvocation",
+        "requestBody" : {
+          "description" : "请求参数体",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CommandInvocationRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          },
+          "201" : {
+            "description" : "Created"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        },
+        "security" : [ {
+          "apiToken" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/endpointGroups" : {
+      "post" : {
+        "tags" : [ "终端组管理(endpointGroup)" ],
+        "summary" : "静态终端组下添加终端",
+        "operationId" : "addEndpointToGroup",
+        "requestBody" : {
+          "description" : "请求参数体",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/EndpointGroupMappingCreateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          },
+          "201" : {
+            "description" : "Created"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        },
+        "security" : [ {
+          "apiToken" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/endpointGroups/statics" : {
+      "get" : {
+        "tags" : [ "终端组管理(endpointGroup)" ],
+        "summary" : "静态终端组列表（分页）",
+        "operationId" : "listStaticEndpointGroup",
+        "parameters" : [ {
+          "name" : "tenantId",
+          "in" : "query",
+          "description" : "租户id",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "id",
+          "in" : "query",
+          "description" : "终端id",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "projectToken",
+          "in" : "query",
+          "description" : "项目token",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "groupName",
+          "in" : "query",
+          "description" : "终端组名称",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "分页当前页数(默认0)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "description" : "每页条数(默认20,最大100)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "排序方式(格式:field,desc)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/EndpointGroupDto"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        },
+        "security" : [ {
+          "apiToken" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/endpointGroups/dynamics" : {
+      "get" : {
+        "tags" : [ "终端组管理(endpointGroup)" ],
+        "summary" : "动态终端组列表（分页）",
+        "operationId" : "listDynamicEndpointGroup",
+        "parameters" : [ {
+          "name" : "tenantId",
+          "in" : "query",
+          "description" : "租户id",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "id",
+          "in" : "query",
+          "description" : "终端id",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "projectToken",
+          "in" : "query",
+          "description" : "项目token",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "groupName",
+          "in" : "query",
+          "description" : "终端组名称",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "分页当前页数(默认0)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "description" : "每页条数",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "排序方式(格式:field,desc)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/EndpointGroupDto"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        },
+        "security" : [ {
+          "apiToken" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/endpoints" : {
+      "post" : {
+        "tags" : [ "终端管理(endpoint)" ],
+        "summary" : "创建终端",
+        "operationId" : "createEndpoint",
+        "requestBody" : {
+          "description" : "请求参数体",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/EndpointCreateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/EndpointDto"
+                }
+              }
+            }
+          },
+          "201" : {
+            "description" : "Created"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        },
+        "security" : [ {
+          "apiToken" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/endpoints/batches" : {
+      "post" : {
+        "tags" : [ "终端管理(endpoint)" ],
+        "summary" : "批量创建终端(单批次创建限制100条)",
+        "operationId" : "createBatchEndpoint",
+        "requestBody" : {
+          "description" : "请求参数体",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/components/schemas/EndpointCreateRequest"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            }
+          },
+          "201" : {
+            "description" : "Created"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        },
+        "security" : [ {
+          "apiToken" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/endpoints/{endpointId}" : {
+      "put" : {
+        "tags" : [ "终端管理(endpoint)" ],
+        "summary" : "更新终端信息",
+        "operationId" : "updateEndpoint",
+        "parameters" : [ {
+          "name" : "endpointId",
+          "in" : "path",
+          "description" : "终端id",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "请求参数体",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/EndpointUpdateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/EndpointDto"
+                  }
+                }
+              }
+            }
+          },
+          "201" : {
+            "description" : "Created"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        },
+        "security" : [ {
+          "apiToken" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/endpoints/onlines" : {
+      "get" : {
+        "tags" : [ "终端管理(endpoint)" ],
+        "summary" : "在线终端列表（分页）",
+        "operationId" : "listOnLineEndpoint",
+        "parameters" : [ {
+          "name" : "tenantId",
+          "in" : "query",
+          "description" : "租户id",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "id",
+          "in" : "query",
+          "description" : "终端id",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "projectToken",
+          "in" : "query",
+          "description" : "项目token",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "specToken",
+          "in" : "query",
+          "description" : "项目token",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "assignmentToken",
+          "in" : "query",
+          "description" : "关联token",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "alertStatus",
+          "in" : "query",
+          "description" : "告警状态",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "NORMAL", "INFO", "WARNING", "ERROR", "CRITICAL" ]
+          }
+        }, {
+          "name" : "startDate",
+          "in" : "query",
+          "description" : "开始时间(yyyy-MM-dd HH:mm:ss)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        }, {
+          "name" : "endDate",
+          "in" : "query",
+          "description" : "结束时间(yyyy-MM-dd HH:mm:ss)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "分页当前页数(默认0)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "description" : "每页条数(默认20,最大100)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "排序方式(格式:field,desc)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/EndpointDto"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        },
+        "security" : [ {
+          "apiToken" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/endpoints/offlines" : {
+      "get" : {
+        "tags" : [ "终端管理(endpoint)" ],
+        "summary" : "离线终端列表（分页）",
+        "operationId" : "listOffLineEndpoint",
+        "parameters" : [ {
+          "name" : "tenantId",
+          "in" : "query",
+          "description" : "租户id",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "id",
+          "in" : "query",
+          "description" : "终端id",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "projectToken",
+          "in" : "query",
+          "description" : "项目token",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "specToken",
+          "in" : "query",
+          "description" : "项目token",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "assignmentToken",
+          "in" : "query",
+          "description" : "关联token",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "alertStatus",
+          "in" : "query",
+          "description" : "告警状态",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "NORMAL", "INFO", "WARNING", "ERROR", "CRITICAL" ]
+          }
+        }, {
+          "name" : "startDate",
+          "in" : "query",
+          "description" : "开始时间(yyyy-MM-dd HH:mm:ss)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        }, {
+          "name" : "endDate",
+          "in" : "query",
+          "description" : "结束时间(yyyy-MM-dd HH:mm:ss)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "分页当前页数(默认0)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "description" : "每页条数(默认20,最大100)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "排序方式(格式:field,desc)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/EndpointDto"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        },
+        "security" : [ {
+          "apiToken" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/events/states" : {
+      "get" : {
+        "tags" : [ "事件管理(event)" ],
+        "summary" : "终端状态变更事件列表(分页),只支持已经一个月查询",
+        "operationId" : "listStateChangeEvents",
+        "parameters" : [ {
+          "name" : "tenantId",
+          "in" : "query",
+          "description" : "租户id",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "endpointId",
+          "in" : "query",
+          "description" : "终端id",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "startTime",
+          "in" : "query",
+          "description" : "开始时间(yyyy-MM-dd HH:mm:ss)",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        }, {
+          "name" : "endTime",
+          "in" : "query",
+          "description" : "结束时间(yyyy-MM-dd HH:mm:ss)",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "分页当前页数(默认0)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "description" : "每页条数(默认20,最大100)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "排序方式(格式:field,desc)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/EventDto"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        },
+        "security" : [ {
+          "apiToken" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/events/measurements" : {
+      "get" : {
+        "tags" : [ "事件管理(event)" ],
+        "summary" : "终端测量事件列表(分页),只支持最近一个月查询",
+        "operationId" : "listMeasurementEvents",
+        "parameters" : [ {
+          "name" : "tenantId",
+          "in" : "query",
+          "description" : "租户id",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "endpointId",
+          "in" : "query",
+          "description" : "终端id",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "startTime",
+          "in" : "query",
+          "description" : "开始时间(yyyy-MM-dd HH:mm:ss)",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        }, {
+          "name" : "endTime",
+          "in" : "query",
+          "description" : "结束时间(yyyy-MM-dd HH:mm:ss)",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "分页当前页数(默认0)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "description" : "每页条数(默认20,最大100)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "排序方式(格式:field,desc)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "操作成功",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/EventDto"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        },
+        "security" : [ {
+          "apiToken" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/events/locations" : {
+      "get" : {
+        "tags" : [ "事件管理(event)" ],
+        "summary" : "终端地理位置事件列表(分页),只支持最近一个月查询",
+        "operationId" : "listLocationEvents",
+        "parameters" : [ {
+          "name" : "tenantId",
+          "in" : "query",
+          "description" : "租户id",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "endpointId",
+          "in" : "query",
+          "description" : "终端id",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "startTime",
+          "in" : "query",
+          "description" : "开始时间(yyyy-MM-dd HH:mm:ss)",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        }, {
+          "name" : "endTime",
+          "in" : "query",
+          "description" : "结束时间(yyyy-MM-dd HH:mm:ss)",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "分页当前页数(默认0)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "description" : "每页条数(默认20,最大100)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "排序方式(格式:field,desc)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/EventDto"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        },
+        "security" : [ {
+          "apiToken" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/events/alerts" : {
+      "get" : {
+        "tags" : [ "事件管理(event)" ],
+        "summary" : "终端告警事件列表(分页),只支持最近一个月查询",
+        "operationId" : "listAlertsEvents",
+        "parameters" : [ {
+          "name" : "tenantId",
+          "in" : "query",
+          "description" : "租户id",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "endpointId",
+          "in" : "query",
+          "description" : "终端id",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "startTime",
+          "in" : "query",
+          "description" : "开始时间(yyyy-MM-dd HH:mm:ss)",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        }, {
+          "name" : "endTime",
+          "in" : "query",
+          "description" : "结束时间(yyyy-MM-dd HH:mm:ss)",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "分页当前页数(默认0)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "description" : "每页条数(默认20,最大100)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "排序方式(格式:field,desc)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/EventDto"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        },
+        "security" : [ {
+          "apiToken" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/events/responses" : {
+      "get" : {
+        "tags" : [ "事件管理(event)" ],
+        "summary" : "终端命令调用返回事件列表(分页),只支持最近一个月查询",
+        "operationId" : "listCommandResponseEvent",
+        "parameters" : [ {
+          "name" : "tenantId",
+          "in" : "query",
+          "description" : "租户id",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "endpointId",
+          "in" : "query",
+          "description" : "终端id",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "startTime",
+          "in" : "query",
+          "description" : "开始时间(yyyy-MM-dd HH:mm:ss)",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        }, {
+          "name" : "endTime",
+          "in" : "query",
+          "description" : "结束时间(yyyy-MM-dd HH:mm:ss)",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "分页当前页数(默认0)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "description" : "每页条数(默认20,最大100)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "排序方式(格式:field,desc)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/EventDto"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        },
+        "security" : [ {
+          "apiToken" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/projects" : {
+      "get" : {
+        "tags" : [ "项目管理(project)" ],
+        "summary" : "项目列表(分页)",
+        "operationId" : "listProject",
+        "parameters" : [ {
+          "name" : "tenantId",
+          "in" : "query",
+          "description" : "租户id",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "token",
+          "in" : "query",
+          "description" : "项目token",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "name",
+          "in" : "query",
+          "description" : "项目名称",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "startTime",
+          "in" : "query",
+          "description" : "开始时间(yyyy-MM-dd HH:mm:ss)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        }, {
+          "name" : "endTime",
+          "in" : "query",
+          "description" : "结束时间(yyyy-MM-dd HH:mm:ss)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "分页当前页数(默认0)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "description" : "每页条数(默认20,最大100)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/EventDto"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        },
+        "security" : [ {
+          "apiToken" : [ ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "项目管理(project)" ],
+        "summary" : "创建项目",
+        "operationId" : "createProject",
+        "requestBody" : {
+          "description" : "请求参数体",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ProjectCreateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProjectDto"
+                }
+              }
+            }
+          },
+          "201" : {
+            "description" : "Created"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        },
+        "security" : [ {
+          "apiToken" : [ ]
+        } ]
+      }
+    },
+    "/api/v1/specifications/standalones" : {
+      "get" : {
+        "tags" : [ "规格管理(specification)" ],
+        "summary" : "独立规格信息(分页)",
+        "operationId" : "listStandalone",
+        "parameters" : [ {
+          "name" : "tenantId",
+          "in" : "query",
+          "description" : "租户id",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "hardwareId",
+          "in" : "query",
+          "description" : "终端类别id",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "name",
+          "in" : "query",
+          "description" : "项目名称",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "分页当前页数(默认0)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "description" : "每页条数(默认20,最大100)",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/SpecificationDto"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        },
+        "security" : [ {
+          "apiToken" : [ ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "AssetDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "tenantId" : {
+            "type" : "string",
+            "description" : "租户id"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "资产名称"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "资产类型",
+            "enum" : [ "DEVICE", "LOCATION", "PERSON" ]
+          },
+          "categoryId" : {
+            "type" : "string",
+            "description" : "资产类别id"
+          },
+          "properties" : {
+            "type" : "string",
+            "description" : "资产属性"
+          },
+          "configuration" : {
+            "type" : "string",
+            "description" : "资产配置"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "资产描述信息"
+          },
+          "assignment" : {
+            "type" : "array",
+            "description" : "资产关联",
+            "items" : {
+              "$ref" : "#/components/schemas/AssignmentDto"
+            }
+          },
+          "templateDto" : {
+            "$ref" : "#/components/schemas/AssetCategoryTemplateDto"
+          },
+          "assetCategory" : {
+            "$ref" : "#/components/schemas/AssetCategoryDto"
+          }
+        }
+      },
+      "AssignmentDto" : {
+        "type" : "object",
+        "properties" : {
+          "token" : {
+            "type" : "string",
+            "description" : "关联token"
+          },
+          "tenantId" : {
+            "type" : "string",
+            "description" : "租户id"
+          },
+          "assetId" : {
+            "type" : "string",
+            "description" : "资产id"
+          },
+          "assetType" : {
+            "type" : "string",
+            "description" : "资产类型"
+          },
+          "endpointId" : {
+            "type" : "string",
+            "description" : "终端id"
+          },
+          "projectToken" : {
+            "type" : "string",
+            "description" : "项目token"
+          },
+          "state" : {
+            "type" : "string",
+            "description" : "状态"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "关联类型",
+            "enum" : [ "Associated", "Unassociated" ]
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "关联状态",
+            "enum" : [ "Active", "Missing", "Released" ]
+          },
+          "activeDate" : {
+            "type" : "string",
+            "description" : "关联日期",
+            "format" : "date-time"
+          },
+          "metaData" : {
+            "type" : "object",
+            "description" : "关联元数据(Map<String, Object>)"
+          },
+          "projectDto" : {
+            "$ref" : "#/components/schemas/ProjectDto"
+          },
+          "endpointDto" : {
+            "$ref" : "#/components/schemas/EndpointDto"
+          },
+          "hardwareDto" : {
+            "$ref" : "#/components/schemas/HardwareDto"
+          },
+          "specificationDto" : {
+            "$ref" : "#/components/schemas/SpecificationDto"
+          },
+          "assetDto" : {
+            "$ref" : "#/components/schemas/AssetDto"
+          }
+        },
+        "description" : "资产与终端关联DTO"
+      },
+      "AssetCategoryDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "模板id"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "模板名称"
+          },
+          "tenantId" : {
+            "type" : "string",
+            "description" : "租户id"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "资产类型"
+          }
+        },
+        "description" : "资产类别"
+      },
+      "AssignmentCreateRequest" : {
+        "required" : [ "assetId", "endpointId", "tenantId", "type" ],
+        "type" : "object",
+        "properties" : {
+          "tenantId" : {
+            "type" : "string",
+            "description" : "租户id"
+          },
+          "endpointId" : {
+            "type" : "array",
+            "description" : "终端id",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "关联类型",
+            "enum" : [ "Associated", "Unassociated" ]
+          },
+          "assetId" : {
+            "type" : "string",
+            "description" : "资产id"
+          },
+          "metaData" : {
+            "type" : "object",
+            "description" : "关联元数据(Map<String, Object>)"
+          }
+        }
+      },
+      "AssetCategoryTemplateDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "模板id"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "模板名称"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "描述"
+          },
+          "tenantId" : {
+            "type" : "string",
+            "description" : "租户id"
+          },
+          "define" : {
+            "type" : "string",
+            "description" : "模板定义"
+          }
+        },
+        "description" : "资产类别模板定义"
+      },
+      "AssignmentUpdateRequest" : {
+        "required" : [ "tenantId" ],
+        "type" : "object",
+        "properties" : {
+          "tenantId" : {
+            "type" : "string",
+            "description" : "租户id"
+          },
+          "metaData" : {
+            "type" : "object",
+            "description" : "关联元数据(Map<String, Object>)"
+          }
+        },
+        "description" : "释放终端请求参数"
+      },
+      "CommandDto" : {
+        "type" : "object",
+        "properties" : {
+          "token" : {
+            "type" : "string",
+            "description" : "指令token"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "指令名称"
+          },
+          "specToken" : {
+            "type" : "string",
+            "description" : "规格token"
+          },
+          "namespace" : {
+            "type" : "string",
+            "description" : "指令命名空间"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "指令描述信息"
+          },
+          "param" : {
+            "type" : "string",
+            "description" : "指令参数信息"
+          },
+          "metaData" : {
+            "type" : "string",
+            "description" : "元数据"
+          },
+          "tenantId" : {
+            "type" : "string",
+            "description" : "租户id"
+          }
+        },
+        "description" : "指令"
+      },
+      "CommandInvocationRequest" : {
+        "required" : [ "commandToken", "endpointId", "initiator", "target", "tenantId" ],
+        "type" : "object",
+        "properties" : {
+          "tenantId" : {
+            "type" : "string",
+            "description" : "租户id"
+          },
+          "endpointId" : {
+            "type" : "string",
+            "description" : "终端id"
+          },
+          "initiator" : {
+            "type" : "string",
+            "default" : "REST",
+            "enum" : [ "REST", "BatchOperation", "Script", "Scheduler", "Trigger" ]
+          },
+          "target" : {
+            "type" : "string",
+            "enum" : [ "Assignment", "Endpoint" ]
+          },
+          "commandToken" : {
+            "type" : "string",
+            "description" : "指令token"
+          },
+          "initiatorId" : {
+            "type" : "string"
+          },
+          "targetId" : {
+            "type" : "string"
+          },
+          "eventType" : {
+            "type" : "string",
+            "description" : "事件类型",
+            "enum" : [ "StateChange", "Measurement", "Location", "Alert", "CommandInvocation", "CommandResponse", "CheckFirmware", "CheckSoftware", "TimeWindowOffline", "TimeWindowAlert", "TimeAlertUnsolved" ]
+          },
+          "projectToken" : {
+            "type" : "string",
+            "description" : "项目token"
+          },
+          "assignmentType" : {
+            "type" : "string",
+            "enum" : [ "Associated", "Unassociated" ]
+          },
+          "assetType" : {
+            "type" : "string",
+            "enum" : [ "DEVICE", "LOCATION", "PERSON" ]
+          },
+          "assetId" : {
+            "type" : "string"
+          },
+          "metaData" : {
+            "type" : "object",
+            "description" : "源数据（Map<String, Object>）"
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "Pending", "Processing", "Sent", "Responded" ]
+          },
+          "parameterValues" : {
+            "type" : "object",
+            "description" : "指令参数(Map<String, Object>)"
+          }
+        },
+        "description" : "指令执行请求参数"
+      },
+      "EventDto" : {
+        "type" : "object",
+        "properties" : {
+          "index" : {
+            "type" : "number",
+            "description" : "索引"
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "事件id"
+          },
+          "eventType" : {
+            "type" : "string",
+            "description" : "事件id",
+            "enum" : [ "StateChange", "Measurement", "Location", "Alert", "CommandInvocation", "CommandResponse", "CheckFirmware", "CheckSoftware", "TimeWindowOffline", "TimeWindowAlert", "TimeAlertUnsolved" ]
+          },
+          "projectToken" : {
+            "type" : "string",
+            "description" : "项目token"
+          },
+          "assignmentToken" : {
+            "type" : "string",
+            "description" : "关联token"
+          },
+          "assignmentType" : {
+            "type" : "string",
+            "description" : "关联类型",
+            "enum" : [ "Associated", "Unassociated" ]
+          },
+          "assetType" : {
+            "type" : "string",
+            "description" : "资产类型"
+          },
+          "assetId" : {
+            "type" : "string",
+            "description" : "资产id"
+          },
+          "eventDate" : {
+            "type" : "string",
+            "description" : "事件日期",
+            "format" : "date"
+          },
+          "receivedDate" : {
+            "type" : "number",
+            "description" : "事件接受日期(时间戳)",
+            "format" : "int64"
+          },
+          "metaData" : {
+            "type" : "object",
+            "description" : "源数据（Map<String, Object>）"
+          },
+          "tenantId" : {
+            "type" : "string",
+            "description" : "租户id"
+          },
+          "endpointId" : {
+            "type" : "string",
+            "description" : "终端id"
+          },
+          "nodeName" : {
+            "type" : "string",
+            "description" : "终端路由的MQTT节点"
+          },
+          "initiator" : {
+            "type" : "string",
+            "description" : "访问方式",
+            "enum" : [ "REST", "BatchOperation", "Script", "Scheduler", "Trigger" ]
+          },
+          "target" : {
+            "type" : "string",
+            "description" : "访问方式",
+            "enum" : [ "Assignment", "Endpoint" ]
+          },
+          "commandToken" : {
+            "type" : "string",
+            "description" : "指令token"
+          },
+          "parameterValues" : {
+            "type" : "string",
+            "description" : "指令参数(Map<String, Object>)"
+          },
+          "commandStatusEnum" : {
+            "type" : "string",
+            "description" : "状态",
+            "enum" : [ "Pending", "Processing", "Sent", "Responded" ]
+          },
+          "originatingEventId" : {
+            "type" : "string",
+            "description" : "源事件id"
+          },
+          "response" : {
+            "type" : "string",
+            "description" : "响应"
+          },
+          "latitude" : {
+            "type" : "number",
+            "description" : "纬度",
+            "format" : "double"
+          },
+          "longitude" : {
+            "type" : "number",
+            "description" : "经度",
+            "format" : "double"
+          },
+          "elevation" : {
+            "type" : "number",
+            "description" : "海拔",
+            "format" : "double"
+          },
+          "measurements" : {
+            "type" : "object",
+            "description" : "测量数据（Map<String, Object>）"
+          },
+          "source" : {
+            "type" : "string",
+            "description" : "告警来源",
+            "enum" : [ "Endpoint", "System" ]
+          },
+          "level" : {
+            "type" : "string",
+            "description" : "告警级别-定义",
+            "enum" : [ "Normal", "Info", "Warning", "Error", "Critical" ]
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "告警类型"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "告警信息"
+          },
+          "alertStatus" : {
+            "type" : "string",
+            "description" : "告警处理状态",
+            "enum" : [ "NEW", "INPROCESS", "SOLVED" ]
+          },
+          "alertOpt" : {
+            "type" : "string",
+            "description" : "告警动作",
+            "enum" : [ "clear", "update" ]
+          },
+          "lastOccurrence" : {
+            "type" : "number",
+            "description" : "告警最后发生时间(时间戳)",
+            "format" : "int64"
+          },
+          "firstOccurrence" : {
+            "type" : "number",
+            "description" : "告警首次发生时间(时间戳)",
+            "format" : "int64"
+          },
+          "tally" : {
+            "type" : "number",
+            "description" : "告警发生次数",
+            "format" : "int32"
+          },
+          "severity" : {
+            "type" : "number",
+            "description" : "告警级别-数字",
+            "format" : "int32"
+          },
+          "commandDto" : {
+            "$ref" : "#/components/schemas/CommandDto"
+          },
+          "endpointStatus" : {
+            "type" : "string",
+            "description" : "终端状态",
+            "enum" : [ "INIT", "ONLINE", "OFFLINE" ]
+          }
+        },
+        "description" : "事件"
+      },
+      "EndpointCreateRequest" : {
+        "required" : [ "id", "password", "projectToken", "specToken", "status", "tenantId", "username" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "终端id"
+          },
+          "projectToken" : {
+            "type" : "string",
+            "description" : "项目token"
+          },
+          "specToken" : {
+            "type" : "string",
+            "description" : "规格token"
+          },
+          "tenantId" : {
+            "type" : "string",
+            "description" : "租户id"
+          },
+          "username" : {
+            "type" : "string",
+            "description" : "终端用户名"
+          },
+          "password" : {
+            "type" : "string",
+            "description" : "终端密码"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "终端描述信息"
+          },
+          "metaData" : {
+            "type" : "object",
+            "description" : "元数据(Map<String,Object>)"
+          },
+          "iccid" : {
+            "type" : "string",
+            "description" : "sim卡的iccid"
+          }
+        },
+        "description" : "终端创建请求参数"
+      },
+      "EndpointFilterDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "终端id"
+          },
+          "projectToken" : {
+            "type" : "string",
+            "description" : "项目token"
+          },
+          "specToken" : {
+            "type" : "string",
+            "description" : "规格token"
+          },
+          "assignmentToken" : {
+            "type" : "string",
+            "description" : "关联token"
+          },
+          "tenantId" : {
+            "type" : "string",
+            "description" : "租户id"
+          },
+          "groupName" : {
+            "type" : "string",
+            "description" : "终端组名称"
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "组类型",
+            "enum" : [ "INIT", "ONLINE", "OFFLINE" ]
+          },
+          "alertStatus" : {
+            "type" : "string",
+            "description" : "组类型",
+            "enum" : [ "NORMAL", "INFO", "WARNING", "ERROR", "CRITICAL" ]
+          },
+          "statusUpdateTime" : {
+            "type" : "string",
+            "description" : "终端状态更新时间",
+            "format" : "date"
+          },
+          "nodeName" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "终端描述信息"
+          },
+          "metaData" : {
+            "type" : "string",
+            "description" : "元数据"
+          },
+          "startDate" : {
+            "type" : "string",
+            "description" : "终端接入开始时间",
+            "format" : "date"
+          },
+          "endDate" : {
+            "type" : "string",
+            "description" : "终端接入结束时间",
+            "format" : "date"
+          },
+          "iccid" : {
+            "type" : "string"
+          },
+          "ipAddress" : {
+            "type" : "string"
+          },
+          "userName" : {
+            "type" : "string"
+          },
+          "profileFilter" : {
+            "type" : "string",
+            "description" : "终端profile过滤关键字"
+          }
+        },
+        "description" : "终端过滤条件"
+      },
+      "EndpointUpdateRequest" : {
+        "required" : [ "specToken", "tenantId" ],
+        "type" : "object",
+        "properties" : {
+          "tenantId" : {
+            "type" : "string",
+            "description" : "租户id"
+          },
+          "specToken" : {
+            "type" : "string",
+            "description" : "规格token"
+          },
+          "iccid" : {
+            "type" : "string",
+            "description" : "iccid"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "终端描述信息"
+          },
+          "metaData" : {
+            "type" : "object",
+            "description" : "元数据(Map<String,Object>)"
+          },
+          "acctId" : {
+            "type" : "string",
+            "description" : "运营商账户id"
+          }
+        },
+        "description" : "终端创建请求参数"
+      },
+      "EndpointGroupDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "终端组id"
+          },
+          "projectToken" : {
+            "type" : "string",
+            "description" : "项目token"
+          },
+          "tenantId" : {
+            "type" : "string",
+            "description" : "租户id"
+          },
+          "groupName" : {
+            "type" : "string",
+            "description" : "终端组名称"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "组类型",
+            "enum" : [ "STATIC", "DYNAMIC" ]
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "终端组描述信息"
+          },
+          "endpointFilter" : {
+            "$ref" : "#/components/schemas/EndpointFilterDto"
+          },
+          "level" : {
+            "type" : "string",
+            "description" : "终端组的创建用户的level"
+          },
+          "endpointsCount" : {
+            "type" : "number",
+            "format" : "int64"
+          }
+        },
+        "description" : "终端组请求参数"
+      },
+      "EndpointGroupQueryRequest" : {
+        "type" : "object",
+        "properties" : {
+          "tenantId" : {
+            "type" : "string",
+            "description" : "租户id"
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "项目id"
+          },
+          "projectToken" : {
+            "type" : "string",
+            "description" : "项目token"
+          },
+          "groupName" : {
+            "type" : "string",
+            "description" : "终端组名称"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "组类型",
+            "enum" : [ "STATIC", "DYNAMIC" ]
+          }
+        },
+        "description" : "终端组请求参数"
+      },
+      "EndpointGroupMappingCreateRequest" : {
+        "required" : [ "endpointIdSet", "groupId", "tenantId" ],
+        "type" : "object",
+        "properties" : {
+          "tenantId" : {
+            "type" : "string",
+            "description" : "终端id集合"
+          },
+          "groupId" : {
+            "type" : "string",
+            "description" : "终端组id"
+          },
+          "endpointIdSet" : {
+            "type" : "array",
+            "description" : "终端id集合",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        },
+        "description" : "终端组添加终端请求参数"
+      },
+      "EndpointQueryRequest" : {
+        "type" : "object",
+        "properties" : {
+          "tenantId" : {
+            "type" : "string",
+            "description" : "终端id集合"
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "终端id"
+          },
+          "projectToken" : {
+            "type" : "string",
+            "description" : "项目token"
+          },
+          "specToken" : {
+            "type" : "string",
+            "description" : "规格token"
+          },
+          "assignmentToken" : {
+            "type" : "string",
+            "description" : "关联token"
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "关联token",
+            "enum" : [ "INIT", "ONLINE", "OFFLINE" ]
+          },
+          "alertStatus" : {
+            "type" : "string",
+            "description" : "告警状态",
+            "enum" : [ "NORMAL", "INFO", "WARNING", "ERROR", "CRITICAL" ]
+          },
+          "startDate" : {
+            "type" : "string",
+            "description" : "开始时间(yyyy-MM-dd HH:mm:ss)",
+            "format" : "date"
+          },
+          "endDate" : {
+            "type" : "string",
+            "description" : "结束时间(yyyy-MM-dd HH:mm:ss)",
+            "format" : "date"
+          },
+          "returnCount" : {
+            "type" : "number",
+            "format" : "int32"
+          }
+        },
+        "description" : "终端组添加终端请求参数"
+      },
+      "EndpointDto" : {
+        "type" : "object",
+        "properties" : {
+          "uid" : {
+            "type" : "string",
+            "description" : "uid"
+          },
+          "tenantId" : {
+            "type" : "string",
+            "description" : "租户id"
+          },
+          "projectToken" : {
+            "type" : "string",
+            "description" : "项目token"
+          },
+          "specToken" : {
+            "type" : "string",
+            "description" : "规格token"
+          },
+          "assignmentToken" : {
+            "type" : "string",
+            "description" : "关联token"
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "在线状态",
+            "enum" : [ "INIT", "ONLINE", "OFFLINE" ]
+          },
+          "alertStatus" : {
+            "type" : "string",
+            "description" : "终端告警状态",
+            "enum" : [ "NORMAL", "INFO", "WARNING", "ERROR", "CRITICAL" ]
+          },
+          "statusUpdateTime" : {
+            "type" : "string",
+            "description" : "终端状态更新时间",
+            "format" : "date-time"
+          },
+          "connectedTime" : {
+            "type" : "string",
+            "description" : "终端首次接入时间时间",
+            "format" : "date-time"
+          },
+          "nodeName" : {
+            "type" : "string",
+            "description" : "节点名称"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "终端描述信息"
+          },
+          "metaData" : {
+            "type" : "string",
+            "description" : "元数据"
+          },
+          "project" : {
+            "$ref" : "#/components/schemas/ProjectDto"
+          },
+          "specification" : {
+            "$ref" : "#/components/schemas/SpecificationDto"
+          },
+          "assignment" : {
+            "$ref" : "#/components/schemas/AssignmentDto"
+          },
+          "endpointAclDtoList" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/AssignmentDto"
+            }
+          },
+          "startDate" : {
+            "type" : "string",
+            "description" : "开始时间",
+            "format" : "date-time"
+          },
+          "endDate" : {
+            "type" : "string",
+            "description" : "结束时间",
+            "format" : "date-time"
+          },
+          "acctId" : {
+            "type" : "string"
+          },
+          "iccid" : {
+            "type" : "string"
+          },
+          "ipAddress" : {
+            "type" : "string"
+          },
+          "userName" : {
+            "type" : "string"
+          },
+          "password" : {
+            "type" : "string"
+          },
+          "profileFilter" : {
+            "type" : "string"
+          },
+          "returnCount" : {
+            "type" : "number"
+          }
+        },
+        "description" : "终端DTO"
+      },
+      "HardwareDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "终端类别id"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "终端类别名称"
+          },
+          "properties" : {
+            "type" : "string",
+            "description" : "终端类别属性"
+          },
+          "sku" : {
+            "type" : "string"
+          },
+          "tenantId" : {
+            "type" : "string",
+            "description" : "租户id"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "终端类别描述信息"
+          },
+          "startDate" : {
+            "type" : "string",
+            "description" : "开始日期",
+            "format" : "date-time"
+          },
+          "endDate" : {
+            "type" : "string",
+            "description" : "结束日期",
+            "format" : "date-time"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "终端类别类型",
+            "enum" : [ "HARDWARE" ]
+          }
+        },
+        "description" : "终端类别"
+      },
+      "ProjectDto" : {
+        "type" : "object",
+        "properties" : {
+          "token" : {
+            "type" : "string",
+            "description" : "项目token"
+          },
+          "tenantId" : {
+            "type" : "string",
+            "description" : "租户id"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "项目名称"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "项目描述"
+          },
+          "baiduMapApiKey" : {
+            "type" : "string",
+            "description" : "项目地图信息"
+          },
+          "projectAdmin" : {
+            "type" : "string",
+            "description" : "项目管理员,多个管理员用逗号分隔"
+          },
+          "startDate" : {
+            "type" : "string",
+            "description" : "开始日期",
+            "format" : "date-time"
+          },
+          "endDate" : {
+            "type" : "string",
+            "description" : "结束日期",
+            "format" : "date-time"
+          },
+          "metaData" : {
+            "type" : "object",
+            "description" : "关联元数据(Map<String, Object>)"
+          }
+        },
+        "description" : "项目DTO"
+      },
+      "ProjectCreateRequest" : {
+        "required" : [ "name", "tenantId" ],
+        "type" : "object",
+        "properties" : {
+          "tenantId" : {
+            "type" : "string",
+            "description" : "租户id"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "项目名称"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "项目描述"
+          },
+          "baiduMapApiKey" : {
+            "type" : "string",
+            "description" : "项目地图信息"
+          },
+          "projectAdmin" : {
+            "type" : "string",
+            "description" : "项目管理员,多个管理员用逗号分隔"
+          },
+          "metaData" : {
+            "type" : "object",
+            "description" : "关联元数据(Map<String, Object>)"
+          },
+          "mapData" : {
+            "type" : "object",
+            "description" : "项目地图信息"
+          }
+        },
+        "description" : "项目DTO"
+      },
+      "SpecificationDto" : {
+        "type" : "object",
+        "properties" : {
+          "token" : {
+            "type" : "string",
+            "description" : "规格token"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "规格名称"
+          },
+          "hardwareId" : {
+            "type" : "string",
+            "description" : "终端类别id"
+          },
+          "metaData" : {
+            "type" : "string",
+            "description" : "元数据"
+          },
+          "tenantId" : {
+            "type" : "string",
+            "description" : "租户id"
+          },
+          "hardwareName" : {
+            "type" : "string",
+            "description" : "终端类别名称"
+          },
+          "accessProtocol" : {
+            "type" : "string",
+            "description" : "终端使用协议"
+          },
+          "startDate" : {
+            "type" : "string",
+            "description" : "开始日期",
+            "format" : "date-time"
+          },
+          "endDate" : {
+            "type" : "string",
+            "description" : "结束日期",
+            "format" : "date-time"
+          },
+          "containerPolicy" : {
+            "type" : "string",
+            "description" : "规格类型",
+            "enum" : [ "Standalone", "Composite" ]
+          }
+        },
+        "description" : "规格DTO"
+      }
+    },
+    "responses" : {
+      "Created" : {
+        "description" : "Created"
+      },
+      "NotFound" : {
+        "description" : "Not Found"
+      },
+      "Unauthorized" : {
+        "description" : "Unauthorized"
+      },
+      "BadRequest" : {
+        "description" : "Bad Request"
+      },
+      "Success" : {
+        "description" : "OK"
+      }
+    }
+  }
+}
